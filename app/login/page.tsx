@@ -30,6 +30,8 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
+import axios, { AxiosError } from 'axios'
+import { RegisterResponse } from "../api/register/route"
 
 
 export default function Login() {
@@ -64,15 +66,32 @@ export default function Login() {
     //     }
     // }
 
-    const handleRegister = React.useCallback(() => {
+    const handleRegister = async() => {
         const isMauaEmail = registerEmail.endsWith("@maua.br")
-        if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
-            setIsRegistered(true)
-            setTimeout(() => setIsRegistered(false), 2000)
-        } else {
-            alert("Por favor, preencha todos os campos corretamente.")
-        }
-    }, [])
+        // if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
+            try{
+                const response = await axios.post<RegisterResponse>("/api/register", {
+                    registerName,
+                    registerEmail,
+                    registerPassword,
+                    currentRoom,
+                    desiredRoom,
+                })
+                console.log("PASSOU AQUI")
+                console.log("Dados recebidos :", { registerName, registerEmail, registerPassword, currentRoom, desiredRoom });
+                setIsRegistered(true)
+                setTimeout(() => setIsRegistered(false), 2000)
+            }
+            catch(error) {
+                if(error instanceof AxiosError) {
+                    console.log(error.message)
+                console.log("DEU MERDA")
+                }
+            }
+        // } else {
+        //     alert("Por favor, preencha todos os campos corretamente.")
+        // }
+    }
 
 
 
