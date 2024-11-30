@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "currentRoom" SET DATA TYPE TEXT,
+ALTER COLUMN "desiredRoom" SET DATA TYPE TEXT;

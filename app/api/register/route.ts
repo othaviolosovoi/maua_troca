@@ -6,8 +6,8 @@ interface RegisterProps{
     registerName: string
     registerEmail: string
     registerPassword: string
-    currentRoom: number
-    desiredRoom: number
+    currentRoom: string
+    desiredRoom: string
 }
 
 export interface RegisterResponse{

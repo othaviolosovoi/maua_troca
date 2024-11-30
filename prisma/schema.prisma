@@ -14,6 +14,6 @@ model User {
   name    String
   email   String   @unique
   password String
-  currentRoom Int
-  desiredRoom Int
+  currentRoom String
+  desiredRoom String
 }
