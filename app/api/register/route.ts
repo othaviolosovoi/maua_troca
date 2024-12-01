@@ -24,8 +24,6 @@ export async function POST(request: Request) {
     // }
     //console.log("Dados recebidos function:", { registerName, registerEmail, registerPassword, currentRoom, desiredRoom });
 
-    
-    console.log("DEU MUITA MERDA MESMO")
 
     const prisma = PrismaGetInstance()
 
