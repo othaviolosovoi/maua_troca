@@ -77,7 +77,6 @@ export default function Login() {
                     currentRoom,
                     desiredRoom,
                 })
-                console.log("PASSOU AQUI")
                 console.log("Dados recebidos :", { registerName, registerEmail, registerPassword, currentRoom, desiredRoom });
                 setIsRegistered(true)
                 setTimeout(() => setIsRegistered(false), 2000)
@@ -85,7 +84,6 @@ export default function Login() {
             catch(error) {
                 if(error instanceof AxiosError) {
                     console.log(error.message)
-                console.log("DEU MERDA")
                 }
             }
         // } else {
