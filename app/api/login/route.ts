@@ -1,5 +1,4 @@
 import { PrismaGetInstance } from "@/lib/prisma-pg"
-import { User } from "@prisma/client"
 import { NextResponse } from "next/server"
 
 interface LoginProps{
