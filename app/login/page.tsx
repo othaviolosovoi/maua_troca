@@ -49,6 +49,7 @@ export default function Login() {
     const [registerName, setRegisterName] = useState("")
     const [registerEmail, setRegisterEmail] = useState("")
     const [registerPassword, setRegisterPassword] = useState("")
+    const [registerYear, setRegisterYear] = useState("");
     const [currentRoom, setCurrentRoom] = useState("")
     const [desiredRoom, setDesiredRoom] = useState("")
     const [isRegistered, setIsRegistered] = useState(false)
@@ -83,6 +84,7 @@ export default function Login() {
                 registerName,
                 registerEmail,
                 registerPassword,
+                registerYear,
                 currentRoom,
                 desiredRoom,
             })
@@ -161,8 +163,8 @@ export default function Login() {
                                     <Input id="register-password" placeholder="Sua Senha" className="placeholder-gray-400 bg-white" type="password" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} />
                                 </div>
                                 <div className="space-y-1">
-                                    <Label htmlFor="register-name">Ano</Label>
-                                    <Select>
+                                    <Label htmlFor="register-year">Ano</Label>
+                                    <Select onValueChange={(value) => setRegisterYear(value)}>
                                         <SelectTrigger className="w-[180px] bg-white placeholder-gray-400">
                                             <SelectValue placeholder="Selecione o Ano" />
                                         </SelectTrigger>
