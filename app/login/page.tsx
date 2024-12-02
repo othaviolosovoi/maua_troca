@@ -1,5 +1,5 @@
 
-/* PRA QUEM FOR USAR: como o banco não tá implementado, no login use: Nome: admin, Senha: admin12345*/
+/* PRA QUEM FOR USAR: como o banco não tá implementado, no login use: Email: admin@maua.br, Senha: admin12345*/
 'use client'
 import * as React from "react"
 import { useState } from "react"
@@ -32,6 +32,15 @@ import {
 } from "@/components/ui/input-otp"
 import axios, { AxiosError } from 'axios'
 import { RegisterResponse } from "../api/register/route"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 
 export default function Login() {
@@ -45,9 +54,9 @@ export default function Login() {
     const [isRegistered, setIsRegistered] = useState(false)
     const router = useRouter()
 
-    
+
     const handleLogin = () => {
-        if (loginName === "admin" && loginPassword === "admin12345") {
+        if (loginName === "admin@maua.br" && loginPassword === "admin12345") {
             localStorage.setItem("authenticated", "true");
             router.push("/troca");
         } else {
@@ -57,7 +66,7 @@ export default function Login() {
 
     // const handleRegister = () => {
     //     const isMauaEmail = registerEmail.endsWith("@maua.br")
-        
+
     //     if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
     //         setIsRegistered(true)
     //         setTimeout(() => setIsRegistered(false), 2000)
@@ -66,26 +75,26 @@ export default function Login() {
     //     }
     // }
 
-    const handleRegister = async() => {
+    const handleRegister = async () => {
         const isMauaEmail = registerEmail.endsWith("@maua.br")
         // if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
-            try{
-                const response = await axios.post<RegisterResponse>("/api/register", {
-                    registerName,
-                    registerEmail,
-                    registerPassword,
-                    currentRoom,
-                    desiredRoom,
-                })
-                console.log("Dados recebidos :", { registerName, registerEmail, registerPassword, currentRoom, desiredRoom });
-                setIsRegistered(true)
-                setTimeout(() => setIsRegistered(false), 2000)
+        try {
+            const response = await axios.post<RegisterResponse>("/api/register", {
+                registerName,
+                registerEmail,
+                registerPassword,
+                currentRoom,
+                desiredRoom,
+            })
+            console.log("Dados recebidos :", { registerName, registerEmail, registerPassword, currentRoom, desiredRoom });
+            setIsRegistered(true)
+            setTimeout(() => setIsRegistered(false), 2000)
+        }
+        catch (error) {
+            if (error instanceof AxiosError) {
+                console.log(error.message)
             }
-            catch(error) {
-                if(error instanceof AxiosError) {
-                    console.log(error.message)
-                }
-            }
+        }
         // } else {
         //     alert("Por favor, preencha todos os campos corretamente.")
         // }
@@ -116,12 +125,13 @@ export default function Login() {
                             </CardHeader>
                             <CardContent className="space-y-2">
                                 <div className="space-y-1">
-                                    <Label htmlFor="login-name">Nome</Label>
-                                    <Input id="login-name" placeholder="Seu nome" className="placeholder-gray-400 bg-white" value={loginName} onChange={(e) => setLoginName(e.target.value)} />
+                                    {/* A única coisa que mudou é a label, todos os ids continuam com login-name */}
+                                    <Label htmlFor="login-name">Email</Label>  
+                                    <Input id="login-name" placeholder="Seu email" className="placeholder-gray-400 bg-white" value={loginName} onChange={(e) => setLoginName(e.target.value)} />
                                 </div>
                                 <div className="space-y-1">
                                     <Label htmlFor="login-password">Senha</Label>
-                                    <Input id="login-password" placeholder="Sua Senha" className="placeholder-gray-400 bg-white" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                                    <Input id="login-password" placeholder="Sua senha" className="placeholder-gray-400 bg-white" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
                                 </div>
                             </CardContent>
                             <CardFooter>
@@ -149,6 +159,22 @@ export default function Login() {
                                 <div className="space-y-1">
                                     <Label htmlFor="register-password">Senha</Label>
                                     <Input id="register-password" placeholder="Sua Senha" className="placeholder-gray-400 bg-white" type="password" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="register-name">Ano</Label>
+                                    <Select>
+                                        <SelectTrigger className="w-[180px] bg-white placeholder-gray-400">
+                                            <SelectValue placeholder="Selecione o Ano" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="1ano">1° Ano</SelectItem>
+                                                <SelectItem value="2ano">2° Ano</SelectItem>
+                                                <SelectItem value="3ano">3° Ano</SelectItem>
+                                                <SelectItem value="4ano">4° Ano</SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 <div className="space-y-1">
                                     <Label>Sala atual</Label>
