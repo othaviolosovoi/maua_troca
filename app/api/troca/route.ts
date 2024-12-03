@@ -1,15 +1,90 @@
-import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { PrismaGetInstance } from "@/lib/prisma-pg"; // Função para instanciar o Prisma Client
+import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+// Função para construir o grafo
+function buildGraph(users: { currentRoom: string; desiredRoom: string; name: string }[]) {
+  const graph: Record<string, { neighbor: string; user: { name: string; currentRoom: string } }[]> = {};
 
+  users.forEach(user => {
+    if (!graph[user.currentRoom]) {
+      graph[user.currentRoom] = [];
+    }
+    graph[user.currentRoom].push({
+      neighbor: user.desiredRoom,
+      user: { name: user.name, currentRoom: user.currentRoom },
+    });
+  });
+
+  return graph;
+}
+
+// Função para encontrar ciclos (cadeias de trocas) no grafo
+function findSwapChains(graph: Record<string, { neighbor: string; user: { name: string; currentRoom: string } }[]>) {
+  const visited = new Set<string>();
+  const chains: { chain: string[] }[] = [];
+
+  // Função auxiliar para busca em profundidade
+  function dfs(current: string, path: string[], start: string) {
+    if (visited.has(current)) return;
+
+    visited.add(current);
+    path.push(current);
+
+    const neighbors = graph[current] || [];
+    for (const { neighbor, user } of neighbors) {
+      if (neighbor === start) {
+        // Fechou um ciclo, adiciona ao resultado
+        chains.push({
+          chain: [...path.map(node => `${graph[node]?.[0]?.user.name || node} (Sala ${node})`), `${user.name} (Sala ${neighbor})`],
+        });
+        continue;
+      }
+      dfs(neighbor, [...path], start);
+    }
+
+    visited.delete(current);
+  }
+
+  // Inicia busca de ciclos para cada nó
+  Object.keys(graph).forEach(node => {
+    dfs(node, [], node);
+  });
+
+  return chains;
+}
+
+// Endpoint principal
 export async function GET() {
   try {
+    const prisma = PrismaGetInstance(); // Obtenha a instância do Prisma
     const users = await prisma.user.findMany();
-    console.log(users)
-    return NextResponse.json(users);
-  } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
-    return NextResponse.json({ error: 'Erro ao khdsljf usuários.' }, { status: 500 });
+
+    // Transformando para retornar apenas os campos desejados
+    const filteredUsers = users.map(user => ({
+      name: user.name,
+      currentRoom: user.currentRoom,
+      desiredRoom: user.desiredRoom,
+    }));
+
+    // Se nenhum usuário for encontrado, retorne uma mensagem apropriada
+    if (!filteredUsers || filteredUsers.length === 0) {
+      return NextResponse.json({ message: "No users found" }, { status: 404 });
+    }
+
+    // Construindo o grafo a partir dos usuários
+    const graph = buildGraph(filteredUsers);
+
+    // Encontrando todas as cadeias de trocas
+    const chains = findSwapChains(graph);
+
+    // Retornando as cadeias de troca
+    if (chains.length > 0) {
+      return NextResponse.json(chains, { status: 200 });
+    } else {
+      return NextResponse.json({ message: "No swap chains found" }, { status: 404 });
+    }
+  } catch (error: any) {
+    console.error("Database connection error:", error.message);
+    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
 }
