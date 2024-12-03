@@ -56,25 +56,33 @@ export default function Login() {
     const router = useRouter()
 
 
-    const handleLogin = () => {
-        if (loginName === "admin@maua.br" && loginPassword === "admin12345") {
+    // const handleLogin = () => {
+    //     if (loginName === "admin@maua.br" && loginPassword === "admin12345") {
+    //         localStorage.setItem("authenticated", "true");
+    //         router.push("/troca");
+    //     } else {
+    //         alert("Credenciais inválidas");
+    //     }
+    // }
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post("/api/login", {
+                email: loginName,
+                password: loginPassword
+            })
+            console.log("Dados recebidos :", { loginName, loginPassword });
             localStorage.setItem("authenticated", "true");
             router.push("/troca");
-        } else {
-            alert("Credenciais inválidas");
+        }
+        catch (error) {
+            if (error instanceof AxiosError) {
+                console.log(error.message)
+            }
         }
     }
 
-    // const handleRegister = () => {
-    //     const isMauaEmail = registerEmail.endsWith("@maua.br")
 
-    //     if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
-    //         setIsRegistered(true)
-    //         setTimeout(() => setIsRegistered(false), 2000)
-    //     } else {
-    //         alert("Por favor, preencha todos os campos corretamente.")
-    //     }
-    // }
 
     const handleRegister = async () => {
         const isMauaEmail = registerEmail.endsWith("@maua.br")
