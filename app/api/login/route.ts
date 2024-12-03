@@ -29,6 +29,7 @@ export async function GET(request: Request) {
         return NextResponse.json({}, { status: 401 })
     }
 
+
     return NextResponse.json({}, { status: 200 })
 }
 

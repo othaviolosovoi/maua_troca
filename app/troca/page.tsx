@@ -81,6 +81,8 @@ export default function Home() {
       try {
           const response = await axios.get("/api/troca");
           setChains(response.data);
+          const usuario = await axios.get("/api/user")
+          console.log(usuario)
       } catch (err: any) {
           console.error("Erro ao buscar cadeias:", err.message);
           setError("Falha ao carregar as cadeias de troca.");
