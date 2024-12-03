@@ -1,4 +1,4 @@
-
+"use client"
 import {Button} from "@/components/ui/button"
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
@@ -24,52 +24,100 @@ interface User {
 
 
 //! Essa é a função que loga a sessão do usuário. Tem que fazer o resto da página de troca nessa função
-export default async function Home(){
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-    const router = useRouter();
-    const [chains, setChains] = useState<Chain[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+// export default async function Home(){
+//     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+//     const router = useRouter();
+//     const [chains, setChains] = useState<Chain[]>([]);
+//     const [isLoading, setIsLoading] = useState(true);
+//     const [error, setError] = useState<string | null>(null);
 
-      // Função para buscar as cadeias de troca
-  const fetchChains = async () => {
-    try {
-      const response = await axios.get<Chain[]>("/api/troca"); // Chama sua API Python
-      setChains(response.data); // Atualiza o estado com as cadeias de troca
-      setError(null);
-    } catch (err: any) {
-      console.error("Erro ao buscar cadeias:", err.message);
-      setError("Falha ao carregar as cadeias de troca.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+//       // Função para buscar as cadeias de troca
+//   const fetchChains = async () => {
+//     try {
+//       const response = await axios.get<Chain[]>("/api/troca"); // Chama sua API Python
+//       setChains(response.data); // Atualiza o estado com as cadeias de troca
+//       setError(null);
+//     } catch (err: any) {
+//       console.error("Erro ao buscar cadeias:", err.message);
+//       setError("Falha ao carregar as cadeias de troca.");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
   
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const authenticated = localStorage.getItem("authenticated");
-      if (!authenticated) {
-        router.push("/login");
-      } else {
-        setIsAuthenticated(true);
-        fetchChains(); // Carrega as cadeias de troca ao montar o componente
+//   useEffect(() => {
+//     if (typeof window !== "undefined") {
+//       const authenticated = localStorage.getItem("authenticated");
+//       if (!authenticated) {
+//         router.push("/login");
+//       } else {
+//         setIsAuthenticated(true);
+//         fetchChains(); // Carrega as cadeias de troca ao montar o componente
+//       }
+//     }
+//   }, [router]);
+
+//     try {
+//         await axios.get(`${process.env.API_URL}/troca`, {
+//             headers: headers() as unknown as AxiosHeaders,
+//         });
+//     } catch (error) {
+//         // ! Essa porra ta dando erro. Ele vai pra /login mesmo que esteja logado
+//         // redirect("/login");
+//     }
+
+//     //! Aqui vai o resto da página
+//     return ( <p>Olá</p>);
+// }
+
+
+export default function Home() {
+  const [chains, setChains] = useState<string[][]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Função para buscar as cadeias de troca
+  const fetchChains = async () => {
+      try {
+          const response = await axios.get("/api/troca");
+          setChains(response.data);
+      } catch (err: any) {
+          console.error("Erro ao buscar cadeias:", err.message);
+          setError("Falha ao carregar as cadeias de troca.");
+      } finally {
+          setIsLoading(false);
       }
-    }
-  }, [router]);
+  };
 
-    try {
-        await axios.get(`${process.env.API_URL}/troca`, {
-            headers: headers() as unknown as AxiosHeaders,
-        });
-    } catch (error) {
-        // ! Essa porra ta dando erro. Ele vai pra /login mesmo que esteja logado
-        // redirect("/login");
-    }
+  useEffect(() => {
+      fetchChains();
+  }, []);
 
-    //! Aqui vai o resto da página
-    return ( <p>Olá</p>);
+  if (isLoading) {
+      return <p>Carregando...</p>;
+  }
+
+  if (error) {
+      return <p className="text-red-500">{error}</p>;
+  }
+
+  return (
+      <div className="container mx-auto p-4">
+          <h1 className="text-2xl font-bold">Bem-vindo!</h1>
+          <p className="text-gray-600">Aqui estão as cadeias de troca:</p>
+          <ul className="mt-4">
+              {chains.length > 0 ? (
+                  chains.map((chain, index) => (
+                      <li key={index} className="p-2 border-b border-gray-300">hihihi
+                      </li>
+                  ))
+              ) : (
+                  <p className="text-gray-500">Nenhuma cadeia disponível.</p>
+              )}
+          </ul>
+      </div>
+  );
 }
-
 
 // export default function Troca() {
 //     const [isAuthenticated, setIsAuthenticated] = useState < boolean | null > (

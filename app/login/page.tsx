@@ -1,4 +1,3 @@
-
 /* PRA QUEM FOR USAR: como o banco não tá implementado, no login use: Email: admin@maua.br, Senha: admin12345*/
 'use client'
 import * as React from "react"
@@ -70,9 +69,13 @@ export default function Login() {
             const response = await axios.post("/api/login", {
                 email: loginName,
                 password: loginPassword
-            })
-            console.log("Dados recebidos :", { loginName, loginPassword });
-            localStorage.setItem("authenticated", "true");
+            });
+            const { token } = response.data;
+            // Define o cookie com o token
+            document.cookie = `auth_token=${token}; Path=/; HttpOnly`;
+
+            //console.log("Dados recebidos :", { loginName, loginPassword });
+            //localStorage.setItem("authenticated", "true");
             router.push("/troca");
         }
         catch (error) {
