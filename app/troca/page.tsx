@@ -1,3 +1,4 @@
+
 import {Button} from "@/components/ui/button"
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
@@ -7,6 +8,12 @@ import {FaSignOutAlt} from 'react-icons/fa';
 import axios, { AxiosHeaders } from 'axios';
 import { redirect } from 'next/navigation';
 import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
+//! Interfaces
+interface Chain {
+    chain: string[]; // Cada "chain" é um array de strings representando a sequência de trocas
+}
 
 interface User {
   id: string; // Ajuste os campos conforme o seu modelo
@@ -14,8 +21,42 @@ interface User {
   email: string;
 }
 
+
+
 //! Essa é a função que loga a sessão do usuário. Tem que fazer o resto da página de troca nessa função
 export default async function Home(){
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const router = useRouter();
+    const [chains, setChains] = useState<Chain[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+      // Função para buscar as cadeias de troca
+  const fetchChains = async () => {
+    try {
+      const response = await axios.get<Chain[]>("/api/troca"); // Chama sua API Python
+      setChains(response.data); // Atualiza o estado com as cadeias de troca
+      setError(null);
+    } catch (err: any) {
+      console.error("Erro ao buscar cadeias:", err.message);
+      setError("Falha ao carregar as cadeias de troca.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const authenticated = localStorage.getItem("authenticated");
+      if (!authenticated) {
+        router.push("/login");
+      } else {
+        setIsAuthenticated(true);
+        fetchChains(); // Carrega as cadeias de troca ao montar o componente
+      }
+    }
+  }, [router]);
+
     try {
         await axios.get(`${process.env.API_URL}/troca`, {
             headers: headers() as unknown as AxiosHeaders,
@@ -26,7 +67,7 @@ export default async function Home(){
     }
 
     //! Aqui vai o resto da página
-    return <h1>Teste</h1>
+    return ( <p>Olá</p>);
 }
 
 
