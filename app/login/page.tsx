@@ -89,7 +89,7 @@ export default function Login() {
 
     const handleRegister = async () => {
         const isMauaEmail = registerEmail.endsWith("@maua.br")
-        // if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
+        if (registerName && isMauaEmail && registerPassword && currentRoom.length === 3 && desiredRoom.length === 3) {
         try {
             const response = await axios.post<RegisterResponse>("/api/register", {
                 registerName,
@@ -108,9 +108,9 @@ export default function Login() {
                 console.log(error.message)
             }
         }
-        // } else {
-        //     alert("Por favor, preencha todos os campos corretamente.")
-        // }
+        } else {
+            alert("Por favor, preencha todos os campos corretamente.")
+        }
     }
 
 
